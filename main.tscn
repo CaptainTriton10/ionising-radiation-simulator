@@ -40,7 +40,7 @@ debug_color = Color(0.051509894, 0.12463001, 0.21402127, 0.41960785)
 [node name="detector" type="Marker2D" parent="."]
 position = Vector2(222, 322)
 script = ExtResource("1_ig7tw")
-metadata/draw_debug = true
+metadata/draw_debug = false
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="detector"]
 stream = ExtResource("2_0xm2m")

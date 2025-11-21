@@ -29,28 +29,33 @@ func _draw() -> void:
 func _physics_process(_delta: float) -> void:
 	# idrk what this does, but it is nescessary for physics raycasts
 	var space_state = get_world_2d().direct_space_state
-	var environment = $".."
+	var environment: Node = $".."
+	
+	var rad_sources: Array[Node] = get_tree().get_nodes_in_group("rad_source")
 	
 	# Moves detector to mouse pos
 	global_position = get_global_mouse_position()
 	
-	# Get collision pairs from the detector to the rad source(s)
-	hits = get_rad_source_path(space_state)
-
-	# Calculates the stopping power of the objects in between the detector and rad source
-	var obstruction_power = get_obstruction_power(hits[0], hits[1])
+	total_activity = calculate_total_activity(space_state, rad_sources)
 	
-	# Calculates the total activity as a measure of the average period in between particle emissions
-	total_activity = 50 / (obstruction_power + environment.background_rad)
+func calculate_total_activity(space_state: PhysicsDirectSpaceState2D, rad_sources: Array[Node]) -> float:
+	var activity = 0
+	
+	for rad_source in rad_sources:
+		# Get collision pairs from the detector to the rad source(s)
+		hits = get_rad_source_path(space_state, rad_source.global_position)
 
-func get_rad_source_path(space_state: PhysicsDirectSpaceState2D) -> Array:
-	var rad_source = get_tree().get_nodes_in_group("rad_source")[1]
-				
+		# Calculates the stopping power of the objects in between the detector and rad source
+		var obstruction_power = get_obstruction_power(hits[0], hits[1], rad_source.global_position)
+		
+		# Calculates the total activity as a measure of the average period in between particle emissions
+		activity += obstruction_power
+		
+	return 50 / (activity + 2)
+
+func get_rad_source_path(space_state: PhysicsDirectSpaceState2D, rad_source: Vector2) -> Array:				
 	var hit_objects2 = [] # First ray        	   Second ray		   etc...
 	var hit_objects = [] # [[pos1, pos2, pos3], [pos1, pos2, pos3], []]
-
-	# For each rad source in the scene...
-	#for i in range(len(rad_sources)):
 	
 	# From detector to rad source
 	var from = global_position
@@ -63,7 +68,7 @@ func get_rad_source_path(space_state: PhysicsDirectSpaceState2D) -> Array:
 	# If hit object, keep on going until nothing hit
 	while true:
 		# Ray query
-		var query = PhysicsRayQueryParameters2D.create(from, rad_source.global_position)
+		var query = PhysicsRayQueryParameters2D.create(from, rad_source)
 		query.collide_with_areas = true
 		query.exclude = prev_objects
 		
@@ -82,7 +87,7 @@ func get_rad_source_path(space_state: PhysicsDirectSpaceState2D) -> Array:
 		iterations += 1
 	
 	# From rad source to detector (backwards)
-	from = rad_source.global_position
+	from = rad_source
 	iterations = 0
 	
 	prev_objects = []
@@ -110,16 +115,12 @@ func get_rad_source_path(space_state: PhysicsDirectSpaceState2D) -> Array:
 
 # Get the total 'strength' of the obstructions in between the rad source and detector
 # Accounts for material density, thickness and distance to rad source
-func get_obstruction_power(obstructions1: Array, obstructions2: Array) -> float:
-	var rad_source = get_tree().get_nodes_in_group("rad_source")[1]
-	
+func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_source: Vector2) -> float:
 	var total_power: float = 0
 
-	# For each rad source in the scene...
-	#for i in range(len(rad_sources)):
 	# Simple pythag to calculate the distance from the detector to the rad source
-	var a = global_position.x - rad_source.global_position.x
-	var b = global_position.y - rad_source.global_position.y
+	var a = global_position.x - rad_source.x
+	var b = global_position.y - rad_source.y
 	
 	# Use the inverse square law for power attenuation
 	var distance_power = 5000 / sqrt(a ** 2 + b ** 2) ** 0.5
