@@ -1,63 +1,48 @@
-[gd_scene load_steps=8 format=3 uid="uid://bfwunv6vq1a0r"]
+[gd_scene load_steps=6 format=3 uid="uid://bfwunv6vq1a0r"]
 
 [ext_resource type="Script" uid="uid://bpb5i88yil60r" path="res://environment.gd" id="1_1bvp3"]
-[ext_resource type="Script" uid="uid://7nt1ncpmqxtq" path="res://detector.gd" id="1_ig7tw"]
-[ext_resource type="AudioStream" uid="uid://cxbwtgqqbarnj" path="res://Sound/click1.wav" id="2_0xm2m"]
-[ext_resource type="Script" uid="uid://dhksenrdunrsg" path="res://detector_sfx.gd" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://dy5rsx2ryoh5s" path="res://Instances/detector.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://dmh0ydg0twgub" path="res://Instances/rad_source.tscn" id="5_lquwl"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ig7tw"]
 radius = 82.1523
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ig7tw"]
-size = Vector2(63, 301.40646)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_h2yge"]
+size = Vector2(63, 63.777954)
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_1bvp3")
 
 [node name="Area2D" type="Area2D" parent="."]
-position = Vector2(387, 322)
+position = Vector2(210, 497)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_ig7tw")
 debug_color = Color(0.051509894, 0.12463001, 0.21402127, 0.41960785)
 
 [node name="Area2D2" type="Area2D" parent="."]
-position = Vector2(783, 321)
+position = Vector2(795, 405.00003)
+rotation = 1.4467841
+scale = Vector2(1, 5.306504)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2"]
 shape = SubResource("RectangleShape2D_ig7tw")
 debug_color = Color(0.051509894, 0.12463001, 0.21402127, 0.41960785)
 
 [node name="Area2D3" type="Area2D" parent="."]
-position = Vector2(613, 321)
+position = Vector2(567.00006, 349)
+rotation = -0.1530647
+scale = Vector2(6, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D3"]
 shape = SubResource("RectangleShape2D_ig7tw")
 debug_color = Color(0.051509894, 0.12463001, 0.21402127, 0.41960785)
 
-[node name="detector" type="Marker2D" parent="."]
-position = Vector2(222, 322)
-script = ExtResource("1_ig7tw")
-metadata/draw_debug = true
+[node name="RadSource" parent="." instance=ExtResource("5_lquwl")]
+position = Vector2(889, 532)
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="detector"]
-stream = ExtResource("2_0xm2m")
-attenuation = 9.915202e-05
-panning_strength = 0.0
-script = ExtResource("3_h2yge")
+[node name="RadSource2" parent="." instance=ExtResource("5_lquwl")]
+position = Vector2(85, 590)
 
-[node name="rad_source" type="Marker2D" parent="." groups=["rad_source"]]
-position = Vector2(959, 329)
-
-[node name="Sprite2D" type="Sprite2D" parent="rad_source"]
-scale = Vector2(5, 5)
-texture = SubResource("PlaceholderTexture2D_h2yge")
-
-[node name="rad_source2" type="Marker2D" parent="." groups=["rad_source"]]
-position = Vector2(700, 572)
-
-[node name="Sprite2D" type="Sprite2D" parent="rad_source2"]
-scale = Vector2(5, 5)
-texture = SubResource("PlaceholderTexture2D_h2yge")
+[node name="Detector" parent="." instance=ExtResource("3_h2yge")]
+position = Vector2(636, 218)
