@@ -1,35 +1,32 @@
 extends Marker2D
 
-var obstructions: Array:
+var debug_obstructions: Array:
 	set(value):
-		obstructions = value
+		debug_obstructions = value
 		queue_redraw()
 
-var hits: Array:
+var debug_hits: Array:
 	set(value):
-		hits = value
+		debug_hits = value
 		queue_redraw()
 
 @export var total_activity: float
+@onready var environment: Node = $".."
 
 func _draw() -> void:
-	if get_meta("draw_debug"):
+	if get_meta("draw_debug") and !debug_hits.is_empty():
 		# Draw functions are relative to the node, this offsets it
 		var pos = Vector2.ZERO - global_position
 		
-		for hit in hits[0]:
-			draw_circle(pos + hit.position, 10, Color.BLUE)
-			
-		for hit in hits[1]:
-			draw_circle(pos + hit.position, 10, Color.BLUE)
-			
-		for obstruction in obstructions:
+		for obstruction in debug_obstructions:
 			draw_line(pos + obstruction[0], pos + obstruction[1], Color.GREEN, 2)
+		
+		for hit in debug_hits:
+			draw_circle(pos + hit.position, 3, Color.BLUE)
 
 func _physics_process(_delta: float) -> void:
 	# idrk what this does, but it is nescessary for physics raycasts
 	var space_state = get_world_2d().direct_space_state
-	var environment: Node = $".."
 	
 	var rad_sources: Array[Node] = get_tree().get_nodes_in_group("rad_source")
 	
@@ -41,9 +38,15 @@ func _physics_process(_delta: float) -> void:
 func calculate_total_activity(space_state: PhysicsDirectSpaceState2D, rad_sources: Array[Node]) -> float:
 	var activity = 0
 	
+	# Reset debug drawings
+	debug_hits = []
+	debug_obstructions = []
+	
 	for rad_source in rad_sources:
 		# Get collision pairs from the detector to the rad source(s)
-		hits = get_rad_source_path(space_state, rad_source.global_position)
+		
+		# It's actually an Tuple[Array, Array], but that's between you and me
+		var hits: Array = get_rad_source_path(space_state, rad_source.global_position) 
 
 		# Calculates the stopping power of the objects in between the detector and rad source
 		var obstruction_power = get_obstruction_power(hits[0], hits[1], rad_source.global_position)
@@ -51,13 +54,13 @@ func calculate_total_activity(space_state: PhysicsDirectSpaceState2D, rad_source
 		# Calculates the total activity as a measure of the average period in between particle emissions
 		activity += obstruction_power
 		
-	return 50 / (activity + 2)
+	return 50 / (activity + environment.background_rad)
 
 func get_rad_source_path(space_state: PhysicsDirectSpaceState2D, rad_source: Vector2) -> Array:				
-	var hit_objects2 = [] # First ray        	   Second ray		   etc...
-	var hit_objects = [] # [[pos1, pos2, pos3], [pos1, pos2, pos3], []]
+	var hit_objects2: Array = []
+	var hit_objects: Array = []
 	
-	# From detector to rad source
+	# From detector to rad source (forwards)
 	var from = global_position
 
 	# Number of iterations, to prevent while loop continuing infinitely
@@ -84,6 +87,8 @@ func get_rad_source_path(space_state: PhysicsDirectSpaceState2D, rad_source: Vec
 		hit_objects.append(result)
 		prev_objects.append(result.rid)
 		
+		debug_hits.append(result)
+		
 		iterations += 1
 	
 	# From rad source to detector (backwards)
@@ -108,6 +113,8 @@ func get_rad_source_path(space_state: PhysicsDirectSpaceState2D, rad_source: Vec
 		from = result.position
 		hit_objects2.append(result)
 		prev_objects.append(result.rid)
+		
+		debug_hits.append(result)
 		
 		iterations += 1
 
@@ -136,7 +143,7 @@ func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_sourc
 	# 2nd array is backwards so it must be reversed
 	obstructions2.reverse()
 	
-	obstructions = []
+	var obstructions = []
 
 	for j in range(len(obstructions1)):
 		obstructions.append([obstructions1[j].position, obstructions2[j].position])
@@ -147,11 +154,13 @@ func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_sourc
 		a = obstruction[0].x - obstruction[1].x
 		b = obstruction[0].y - obstruction[1].y
 		
+		debug_obstructions.append([obstruction[0], obstruction[1]])
+		
 		total_thickness += sqrt(a ** 2 + b ** 2)
 		
 	# Arbitrary value, smaller value means the material can stop more 
 	# radiation, larger value means less of an effect
-	var lambda = 0.2
+	var lambda = 0.05
 	var reduction_multiplier = exp(-(total_thickness / 650) / lambda)
 
 	total_power += distance_power * reduction_multiplier
