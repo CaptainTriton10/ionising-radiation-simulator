@@ -1,3 +1,3 @@
 extends Node2D
 
-@export var background_rad: float = 2
+@export var background_rad: float = 0

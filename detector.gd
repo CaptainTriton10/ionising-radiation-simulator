@@ -138,7 +138,7 @@ func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_sourc
 	
 	# If no objects hit, just use the distance
 	if obstructions1.is_empty() and obstructions2.is_empty():
-		total_power += distance_power
+		return distance_power
 	
 	# 2nd array is backwards so it must be reversed
 	obstructions2.reverse()
@@ -146,7 +146,7 @@ func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_sourc
 	var obstructions = []
 
 	for j in range(len(obstructions1)):
-		obstructions.append([obstructions1[j].position, obstructions2[j].position])
+		obstructions.append([obstructions1[j].position, obstructions2[j].position, obstructions1[j].collider])
 	
 	var total_thickness = 0
 	
@@ -158,11 +158,13 @@ func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_sourc
 		
 		total_thickness += sqrt(a ** 2 + b ** 2)
 		
-	# Arbitrary value, smaller value means the material can stop more 
-	# radiation, larger value means less of an effect
-	var lambda = 0.05
-	var reduction_multiplier = exp(-(total_thickness / 650) / lambda)
-
-	total_power += distance_power * reduction_multiplier
+		var lambda = obstruction[2].get_meta("lambda")
+		
+		if lambda == 0:
+			return 0
+		
+		var reduction_multiplier = exp(-(total_thickness / 650) / lambda)
+		
+		total_power += distance_power * reduction_multiplier
 
 	return total_power
