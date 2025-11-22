@@ -1,8 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://dmh0ydg0twgub"]
+[gd_scene load_steps=3 format=3 uid="uid://dmh0ydg0twgub"]
+
+[ext_resource type="Script" uid="uid://cplvjk0hc4nec" path="res://Instances/rad_source.gd" id="1_8pbgm"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_m60qx"]
 
 [node name="RadSource" type="Marker2D" groups=["rad_source"]]
+script = ExtResource("1_8pbgm")
+metadata/half_life = 6700000000000.0
+metadata/mass = 5.0
+metadata/element = 99
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(5, 5)

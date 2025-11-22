@@ -47,12 +47,14 @@ func calculate_total_activity(space_state: PhysicsDirectSpaceState2D, rad_source
 		
 		# It's actually an Tuple[Array, Array], but that's between you and me
 		var hits: Array = get_rad_source_path(space_state, rad_source.global_position) 
+		var distance = calculate_distance(rad_source.global_position)
 
 		# Calculates the stopping power of the objects in between the detector and rad source
-		var obstruction_power = get_obstruction_power(hits[0], hits[1], rad_source.global_position)
+		var obstruction_power = get_obstruction_power(hits[0], hits[1])
+		var efficiency = 0.0001
 		
 		# Calculates the total activity as a measure of the average period in between particle emissions
-		activity += obstruction_power
+		activity += (rad_source.activity * efficiency * obstruction_power) / distance**2
 		
 	return 50 / (activity + environment.background_rad)
 
@@ -120,25 +122,25 @@ func get_rad_source_path(space_state: PhysicsDirectSpaceState2D, rad_source: Vec
 
 	return [hit_objects, hit_objects2]
 
-# Get the total 'strength' of the obstructions in between the rad source and detector
-# Accounts for material density, thickness and distance to rad source
-func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_source: Vector2) -> float:
-	var total_power: float = 0
-
+func calculate_distance(rad_source: Vector2):
 	# Simple pythag to calculate the distance from the detector to the rad source
 	var a = global_position.x - rad_source.x
 	var b = global_position.y - rad_source.y
 	
-	# Use the inverse square law for power attenuation
-	var distance_power = 5000 / sqrt(a ** 2 + b ** 2) ** 0.5
+	var distance = sqrt(a ** 2 + b ** 2)
 	
+	return distance
+
+# Get the total 'strength' of the obstructions in between the rad source and detector
+# Accounts for material density, thickness and distance to rad source
+func get_obstruction_power(obstructions1: Array, obstructions2: Array) -> float:
 	# If arrays are different sizes, remove last element of 2nd array (detector is clipping)
 	if len(obstructions1) != len(obstructions2):
 		obstructions2.remove_at(len(obstructions2) - 1)
 	
 	# If no objects hit, just use the distance
 	if obstructions1.is_empty() and obstructions2.is_empty():
-		return distance_power
+		return 1
 	
 	# 2nd array is backwards so it must be reversed
 	obstructions2.reverse()
@@ -149,10 +151,11 @@ func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_sourc
 		obstructions.append([obstructions1[j].position, obstructions2[j].position, obstructions1[j].collider])
 	
 	var total_thickness = 0
+	var reduction_multiplier
 	
 	for obstruction in obstructions:
-		a = obstruction[0].x - obstruction[1].x
-		b = obstruction[0].y - obstruction[1].y
+		var a = obstruction[0].x - obstruction[1].x
+		var b = obstruction[0].y - obstruction[1].y
 		
 		debug_obstructions.append([obstruction[0], obstruction[1]])
 		
@@ -163,8 +166,6 @@ func get_obstruction_power(obstructions1: Array, obstructions2: Array, rad_sourc
 		if lambda == 0:
 			return 0
 		
-		var reduction_multiplier = exp(-(total_thickness / 650) / lambda)
+		reduction_multiplier = exp(-(total_thickness / 650) / lambda)
 		
-		total_power += distance_power * reduction_multiplier
-
-	return total_power
+	return reduction_multiplier

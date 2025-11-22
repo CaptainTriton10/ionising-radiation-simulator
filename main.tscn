@@ -14,7 +14,7 @@ position = Vector2(636, 218)
 [node name="Barrier" parent="." instance=ExtResource("4_1bvp3")]
 position = Vector2(323.00006, 419)
 scale = Vector2(15.692694, 3.4168868)
-metadata/lambda = 0.0
+metadata/lambda = 0.05
 
 [node name="Barrier3" parent="." instance=ExtResource("4_1bvp3")]
 position = Vector2(577, 328.99994)
@@ -32,3 +32,6 @@ position = Vector2(322, 477)
 
 [node name="RadSource2" parent="." instance=ExtResource("5_lquwl")]
 position = Vector2(832, 480)
+metadata/half_life = 328320.0
+metadata/mass = 0.01
+metadata/element = 222
