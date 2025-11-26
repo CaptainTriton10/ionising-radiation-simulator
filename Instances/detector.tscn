@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://dy5rsx2ryoh5s"]
 
-[ext_resource type="Script" uid="uid://7nt1ncpmqxtq" path="res://detector.gd" id="1_h4hr2"]
+[ext_resource type="Script" uid="uid://7nt1ncpmqxtq" path="res://Scripts/detector.gd" id="1_h4hr2"]
 [ext_resource type="AudioStream" uid="uid://cxbwtgqqbarnj" path="res://Sound/click1.wav" id="2_mla6r"]
-[ext_resource type="Script" uid="uid://dhksenrdunrsg" path="res://detector_sfx.gd" id="3_7etah"]
+[ext_resource type="Script" uid="uid://dhksenrdunrsg" path="res://Scripts/detector_sfx.gd" id="3_7etah"]
 
 [node name="Detector" type="Marker2D"]
 script = ExtResource("1_h4hr2")

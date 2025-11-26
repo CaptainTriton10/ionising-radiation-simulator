@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bfwunv6vq1a0r"]
 
-[ext_resource type="Script" uid="uid://bpb5i88yil60r" path="res://environment.gd" id="1_1bvp3"]
+[ext_resource type="Script" uid="uid://bpb5i88yil60r" path="res://Scripts/environment.gd" id="1_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://dy5rsx2ryoh5s" path="res://Instances/detector.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://cpt25sqjplxur" path="res://Instances/barrier.tscn" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://dmh0ydg0twgub" path="res://Instances/rad_source.tscn" id="5_lquwl"]
@@ -10,6 +10,7 @@ script = ExtResource("1_1bvp3")
 
 [node name="Detector" parent="." instance=ExtResource("3_h2yge")]
 position = Vector2(636, 218)
+metadata/play_sfx = false
 
 [node name="Barrier" parent="." instance=ExtResource("4_1bvp3")]
 position = Vector2(323.00006, 419)
@@ -29,6 +30,7 @@ metadata/lambda = 0.4
 
 [node name="RadSource" parent="." instance=ExtResource("5_lquwl")]
 position = Vector2(322, 477)
+metadata/half_life = 0.25
 
 [node name="RadSource2" parent="." instance=ExtResource("5_lquwl")]
 position = Vector2(832, 480)
