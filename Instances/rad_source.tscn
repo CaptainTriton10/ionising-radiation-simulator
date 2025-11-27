@@ -2,8 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cplvjk0hc4nec" path="res://Scripts/rad_source.gd" id="1_8pbgm"]
 [ext_resource type="Script" uid="uid://cfh6276i7hqgl" path="res://Scripts/rad_source_label.gd" id="2_adptv"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_m60qx"]
+[ext_resource type="Texture2D" uid="uid://cj285x23a57wu" path="res://Sprites/Radiation_warning_symbol.png" id="2_bkkud"]
 
 [node name="RadSource" type="Marker2D" groups=["rad_source"]]
 script = ExtResource("1_8pbgm")
@@ -12,8 +11,8 @@ metadata/mass = 5.0
 metadata/element = 99
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(5, 5)
-texture = SubResource("PlaceholderTexture2D_m60qx")
+scale = Vector2(0.045, 0.045)
+texture = ExtResource("2_bkkud")
 
 [node name="Label" type="Label" parent="."]
 offset_left = 7.0
