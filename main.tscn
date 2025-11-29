@@ -8,32 +8,17 @@
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_1bvp3")
 
-[node name="Detector" parent="." instance=ExtResource("3_h2yge")]
-position = Vector2(636, 218)
-metadata/play_sfx = false
-
 [node name="Barrier" parent="." instance=ExtResource("4_1bvp3")]
 position = Vector2(323.00006, 419)
 scale = Vector2(15.692694, 3.4168868)
 metadata/lambda = 0.05
 
-[node name="Barrier3" parent="." instance=ExtResource("4_1bvp3")]
-position = Vector2(577, 328.99994)
-rotation = 1.5707964
-scale = Vector2(36.252693, 3.4168868)
-metadata/lambda = 0.0
-
-[node name="Barrier2" parent="." instance=ExtResource("4_1bvp3")]
-position = Vector2(831, 420.00003)
-scale = Vector2(15.692694, 3.4168868)
-metadata/lambda = 0.4
-
 [node name="RadSource" parent="." instance=ExtResource("5_lquwl")]
 position = Vector2(322, 477)
-metadata/half_life = 2.0
+metadata/half_life = 704000000.0
+metadata/mass = 10.0
+metadata/element = 235
 
-[node name="RadSource2" parent="." instance=ExtResource("5_lquwl")]
-position = Vector2(832, 480)
-metadata/half_life = 1.0
-metadata/mass = 500.0
-metadata/element = 222
+[node name="Detector" parent="." instance=ExtResource("3_h2yge")]
+position = Vector2(344, 202)
+metadata/play_sfx = true
