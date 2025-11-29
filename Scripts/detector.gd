@@ -53,10 +53,10 @@ func calculate_total_activity(space_state: PhysicsDirectSpaceState2D, rad_source
 		var obstruction_power = get_obstruction_power(hits[0], hits[1])
 		var efficiency = 0.0001
 		
-		# Calculates the total activity as a measure of the average period in between particle emissions
+		# Calculates the total activity
 		activity += (rad_source.activity * efficiency * obstruction_power) / distance**2
 		
-	return 50 / (activity + environment.background_rad)
+	return activity + environment.background_rad
 
 func get_rad_source_path(space_state: PhysicsDirectSpaceState2D, rad_source: Vector2) -> Array:				
 	var hit_objects2: Array = []
